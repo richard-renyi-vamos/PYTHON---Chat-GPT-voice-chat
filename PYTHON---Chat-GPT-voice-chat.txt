@@ -1,0 +1,46 @@
+import speech_recognition as sr
+from gtts import gTTS
+import playsound
+
+# Initialize recognizer
+recognizer = sr.Recognizer()
+
+# Function to convert text to speech
+def speak(text):
+    tts = gTTS(text=text, lang='en')  # You can specify the language here
+    filename = 'temp.mp3'
+    tts.save(filename)
+    playsound.playsound(filename)
+    # Delete the temporary file
+    os.remove(filename)
+
+# Function to listen to user input
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+
+    try:
+        print("Recognizing...")
+        text = recognizer.recognize_google(audio)
+        return text
+    except sr.UnknownValueError:
+        return "Sorry, could not understand what you said."
+    except sr.RequestError:
+        return "Sorry, unable to access Google Speech Recognition service."
+
+# Main loop
+while True:
+    # Listen for user input
+    user_input = listen()
+    print("User said:", user_input)
+
+    # Example logic based on user input
+    if "hello" in user_input.lower():
+        speak("Hello there!")
+    elif "bye" in user_input.lower():
+        speak("Goodbye!")
+        break  # End the conversation
+    else:
+        speak("I'm not sure how to respond to that.")
+
